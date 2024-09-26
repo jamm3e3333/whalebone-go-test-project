@@ -158,9 +158,6 @@ const docTemplate = `{
         "/v1/client/{id}": {
             "get": {
                 "description": "Retrieves a client's information based on the provided client ID.",
-                "consumes": [
-                    "application/json"
-                ],
                 "produces": [
                     "application/json"
                 ],
@@ -169,14 +166,6 @@ const docTemplate = `{
                 ],
                 "summary": "Get client details by ID",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "example": "application/json",
-                        "description": "Content-Type",
-                        "name": "Content-Type",
-                        "in": "header",
-                        "required": true
-                    },
                     {
                         "type": "string",
                         "example": "\"123e4567-e89b-12d3-a456-426614174000\"",
@@ -204,6 +193,15 @@ const docTemplate = `{
                     },
                     "404": {
                         "description": "{\"error\": \"not found\"}",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "{\"error\": \"unprocessable entity\"}",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {

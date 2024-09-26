@@ -173,16 +173,8 @@ paths:
       - Client
   /v1/client/{id}:
     get:
-      consumes:
-      - application/json
       description: Retrieves a client's information based on the provided client ID.
       parameters:
-      - description: Content-Type
-        example: application/json
-        in: header
-        name: Content-Type
-        required: true
-        type: string
       - description: Client ID
         example: '"123e4567-e89b-12d3-a456-426614174000"'
         in: path
@@ -204,6 +196,12 @@ paths:
             type: object
         "404":
           description: '{"error": "not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "422":
+          description: '{"error": "unprocessable entity"}'
           schema:
             additionalProperties:
               type: string

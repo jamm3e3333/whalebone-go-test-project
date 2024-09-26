@@ -142,6 +142,7 @@ type GetClientHandler interface {
 // @Success 200 {object} GetClientResponse "Client details"
 // @Failure 400 {object} map[string]string "{"error": "bad request"}"
 // @Failure 404 {object} map[string]string "{"error": "not found"}"
+// @Failure 422 {object} map[string]string "{"error": "unprocessable entity"}"
 // @Failure 500 {object} map[string]string "{"error": "internal server error"}"
 // @Router /v1/client/{id} [get]
 func (c *Controller) GetClient(ctx *gin.Context) {
