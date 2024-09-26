@@ -17,7 +17,6 @@ type APPConfig struct {
 	HealthCheckTimeout time.Duration `env:"CONFIG_HEALTH_CHECK_TIMEOUT"`
 	Timezone           string        `env:"CONFIG_TIMEZONE"`
 	AppName            string        `env:"CONFIG_APP_NAME" env-default:"whalebone_clients"`
-	HashSecret         string        `env:"CONFIG_HASH_SECRET"`
 }
 
 func CreateAPPConfig() (APPConfig, error) {
