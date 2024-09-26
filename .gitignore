@@ -9,6 +9,7 @@ firebase-debug.log*
 firebase-debug.*.log*
 .idea
 tmp
+**/.DS_Store
 
 # Firebase cache
 .firebase/
