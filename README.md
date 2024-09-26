@@ -24,7 +24,7 @@ GET /{id}
 ```
 
 # Solution
-Personally according the REST API definition, I would like the "creating" and "receiving" data to/from DB endpoints to name like this:
+Personally according the REST API standards, I would like the "creating" and "receiving" data to/from DB endpoints to be named like this:
 
 `POST /v1/client`
 
