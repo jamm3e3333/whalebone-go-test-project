@@ -1,0 +1,33 @@
+name: test
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: run-tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: setup-docker-containers
+        uses: docker/setup-buildx-action@v2
+
+      - name: run-docker-containers
+        run: make up-detached
+
+      - name: export-db-env
+        run: echo "DATABASE_URL=postgres://postgres:postgres@postgres/whalebone-clients?sslmode=disable" >> $GITHUB_ENV
+
+      - name: run-docker-containers
+        run: make migration-up
+
+      - name: run-tests
+        run: make test

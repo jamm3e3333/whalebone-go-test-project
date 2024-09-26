@@ -1,0 +1,69 @@
+version: "3.7"
+
+services:
+  whalebone-clients:
+    init: true
+    container_name: whalebone-clients
+    build:
+      context: .
+      target: development
+      args:
+        PROJECT_ROOT: "/go/src/github.com/jamm3e3333/whalebone-clients"
+    ports:
+      - "59110:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ".:/go/src/github.com/jamm3e3333/whalebone-clients/:cached"
+    environment:
+      # APP
+      CONFIG_HTTP_LISTEN_PORT: 3000
+      APP_ENV: local
+      CONFIG_ALLOW_ORIGINS: "*"
+      CONFIG_HTTP_READ_TIMEOUT: 5s
+      CONFIG_HTTP_WRITE_TIMEOUT: 15s
+      CONFIG_HTTP_SHUTDOWN_TIMEOUT: 30s
+      CONFIG_HEALTH_CHECK_TIMEOUT: 5s
+      CONFIG_TIMEZONE: Europe/Warsaw
+      CONFIG_APP_NAME: whalebone_clients
+
+      # LOGGER
+      CONFIG_LOG_LEVEL: debug
+      CONFIG_LOG_DEVEL_MODE: true
+
+      # POSTGRESQL
+      CONFIG_DATABASE_HOST: postgres
+      CONFIG_DATABASE_PORT: 5432
+      CONFIG_DATABASE_USER: postgres
+      CONFIG_DATABASE_PASSWORD: postgres
+      CONFIG_DATABASE_NAME: whalebone-clients
+      CONFIG_DATABASE_POOL_MAX_CONN_LIFETIME: 50s
+      CONFIG_DATABASE_POOL_MAX_CONN_IDLE_TIME: 50s
+      CONFIG_DATABASE_QUERY_TIMEOUT: 30s
+      CONFIG_DATABASE_POOL_MAX_CONNS: 100
+      CONFIG_DATABASE_POOL_MIN_CONNS: 1
+      CONFIG_DATABASE_POOL_HEALTH_CHECK_PERIOD: 5s
+
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/health/readiness || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  postgres:
+    image: postgis/postgis:15-3.4
+    container_name: postgres
+    ports:
+      - "54320:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: whalebone-clients
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s

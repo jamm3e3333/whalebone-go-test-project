@@ -1,0 +1,220 @@
+definitions:
+  client.CreateClientReq:
+    properties:
+      date_of_birth:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+    required:
+    - date_of_birth
+    - email
+    - id
+    - name
+    type: object
+  client.GetClientResponse:
+    properties:
+      date_of_birth:
+        example: "2021-01-01T00:00:00Z"
+        format: date-time
+        type: string
+      email:
+        example: john.doe@john.doe.doe
+        type: string
+      id:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+      name:
+        example: John Doe
+        type: string
+    required:
+    - date_of_birth
+    - email
+    - id
+    - name
+    type: object
+  health.ComponentStatus:
+    properties:
+      component:
+        example: main
+        type: string
+      status:
+        allOf:
+        - $ref: '#/definitions/health.Status'
+        enum:
+        - up
+        - down
+        example: up
+    type: object
+  health.Result:
+    properties:
+      components:
+        items:
+          $ref: '#/definitions/health.ComponentStatus'
+        type: array
+      status:
+        allOf:
+        - $ref: '#/definitions/health.Status'
+        enum:
+        - up
+        - down
+        example: up
+    type: object
+  health.Status:
+    enum:
+    - up
+    - down
+    - timeout
+    type: string
+    x-enum-varnames:
+    - StatusUp
+    - StatusDown
+    - StatusTimeout
+info:
+  contact:
+    name: Whalebone
+  description: API provides endpoints for whalebone clients
+  title: Whalebone Clients API
+  version: "2.0"
+paths:
+  /health/liveness:
+    get:
+      description: Health check for liveness probe
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/health.Result'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/health.Result'
+      tags:
+      - Health
+  /health/readiness:
+    get:
+      description: Health check of the application
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/health.Result'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/health.Result'
+      tags:
+      - Health
+  /metrics:
+    get:
+      description: Expose Prometheus metrics
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: Prometheus metrics
+          schema:
+            type: string
+      tags:
+      - Metrics
+  /v1/client:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new client account with the provided details such as
+        email, date of birth, name, and id.
+      parameters:
+      - description: Content-Type
+        example: application/json
+        in: header
+        name: Content-Type
+        required: true
+        type: string
+      - description: Client data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/client.CreateClientReq'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: string
+        "400":
+          description: '{"error": "bad request"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "422":
+          description: '{"error": "unprocessable entity"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "internal server error"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new client
+      tags:
+      - Client
+  /v1/client/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a client's information based on the provided client ID.
+      parameters:
+      - description: Content-Type
+        example: application/json
+        in: header
+        name: Content-Type
+        required: true
+        type: string
+      - description: Client ID
+        example: '"123e4567-e89b-12d3-a456-426614174000"'
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Client details
+          schema:
+            $ref: '#/definitions/client.GetClientResponse'
+        "400":
+          description: '{"error": "bad request"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: '{"error": "not found"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: '{"error": "internal server error"}'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get client details by ID
+      tags:
+      - Client
+swagger: "2.0"
