@@ -80,6 +80,8 @@ CONFIG_DATABASE_POOL_HEALTH_CHECK_PERIOD: 5s
 
 # Run App locally
 
+App is dockerized and can be run with docker-compose. When running `make up` app will be built as a binary in `target/whalebone-clients` and run in a docker container.
+
 Every dependency (postgres, go app) is dockerized with its health check and with exposed ports to be accessible from outside. Check [docker-compose](./docker-compose.yaml).
 
 For accessing the Go App REST API, check the swagger UI [API Docs](http://localhost:59110/api/indexlhtml).
